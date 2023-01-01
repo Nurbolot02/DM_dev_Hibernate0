@@ -1,5 +1,6 @@
 package com.ntg.util;
 
+import com.ntg.entity.Company;
 import com.ntg.entity.User;
 import lombok.experimental.UtilityClass;
 import org.hibernate.SessionFactory;
@@ -11,6 +12,7 @@ public class HibernateUtil {
     public static SessionFactory buildSessionFactory(){
         Configuration configuration = new Configuration();
         configuration.addAnnotatedClass(User.class);
+        configuration.addAnnotatedClass(Company.class);
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         configuration.configure();
         return configuration.buildSessionFactory();
