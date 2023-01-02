@@ -11,6 +11,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 
 @Slf4j
 public class HibernateRunner {
@@ -18,10 +19,26 @@ public class HibernateRunner {
 
         Company company = Company.builder()
                 .name("Google")
+                .users(new HashSet<>())
                 .build();
 
         User user = User.builder()
-                .userName("ngulamidinov4500fdff0@gmail.com")
+                .userName("ngulamidinov45@gmail.com")
+                .age(20)
+                .personalInfo(
+                        PersonalInfo.builder()
+                                .firstName("Nurbolot %d")
+                                .lastName("Gulamidinov %d")
+                                .birthDate(LocalDate.of(2002, 11, 5))
+                                .build()
+                )
+                .role(Role.USER)
+                .company(company)
+                .build();
+
+
+        User user2 = User.builder()
+                .userName("ngulamidinov@gmail.com")
                 .age(20)
                 .personalInfo(
                         PersonalInfo.builder()
@@ -39,7 +56,6 @@ public class HibernateRunner {
             try (Session session1 = sessionFactory.openSession()) {
                 session1.beginTransaction();
                 session1.remove(company);
-                session1.remove(user);
                 session1.getTransaction().commit();
             }
 
@@ -48,11 +64,11 @@ public class HibernateRunner {
             try (session) {
                 Transaction transaction = session.beginTransaction();
 
+                company.addUser(user);
+                company.addUser(user2);
                 User user1 = session.get(User.class, 3L);
                 System.out.println(user1);
                 session.persist(company);
-                session.persist(user);
-
                 session.getTransaction().commit();
             }
         }

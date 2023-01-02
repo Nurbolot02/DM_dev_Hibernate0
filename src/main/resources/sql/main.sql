@@ -3,7 +3,7 @@ drop table if exists company;
 
 create table company(
     id int primary key,
-    name varchar(64) not null
+    name varchar(64) not null unique
 );
 
 create sequence company_id_seq
