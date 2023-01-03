@@ -1,24 +1,24 @@
 package com.ntg.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -27,32 +27,30 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Company {
+public class Profile {
     @Id
-    @SequenceGenerator(name = "company_id_seq_gen", sequenceName = "company_id_seq", allocationSize = 1)
-    @GeneratedValue(generator = "company_id_seq_gen", strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
+    @SequenceGenerator(name = "profile_id_gen", sequenceName = "profile_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "profile_id_gen")
     private Long id;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    @Column(nullable = false, length = 128)
+    private String street;
+    @Column(nullable = false, length = 2)
+    private String language;
 
-    @Column(unique = true, nullable = false)
-    private String name;
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
-    @Builder.Default
-    private Set<User> users = new HashSet<>();
-
-    public boolean addUser(User user){
-        this.users.add(user);
-        user.setCompany(this);
-        return true;
+    public void setUser(User user) {
+        user.setProfile(this);
+        this.user = user;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Company company = (Company) o;
-        return id != null && Objects.equals(id, company.id);
+        Profile profile = (Profile) o;
+        return id != null && Objects.equals(id, profile.id);
     }
 
     @Override

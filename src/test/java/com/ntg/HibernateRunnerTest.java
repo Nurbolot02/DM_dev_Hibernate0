@@ -1,7 +1,9 @@
 package com.ntg;
 
+import com.ntg.entity.Chat;
 import com.ntg.entity.Company;
 import com.ntg.entity.PersonalInfo;
+import com.ntg.entity.Profile;
 import com.ntg.entity.Role;
 import com.ntg.entity.User;
 import com.ntg.util.HibernateUtil;
@@ -23,8 +25,113 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 class HibernateRunnerTest {
+
     @Test
-    void deleteUserOrphanRemoval(){
+    void CheckManyToMany() {
+        try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory()) {
+            try (Session session = sessionFactory.openSession()) {
+                session.beginTransaction();
+
+                User user1 = session.get(User.class, 7L);
+                System.out.println(user1);
+
+                Company company = Company.builder()
+                        .name("Google")
+                        .users(new HashSet<>())
+                        .build();
+
+                User user = User.builder()
+                        .userName("ngulamidinov45@gmail.com")
+                        .age(20)
+                        .personalInfo(
+                                PersonalInfo.builder()
+                                        .firstName("Nurbolot %d")
+                                        .lastName("Gulamidinov %d")
+                                        .birthDate(LocalDate.of(2002, 11, 5))
+                                        .build()
+                        )
+                        .role(Role.USER)
+                        .company(company)
+                        .build();
+
+
+                Profile profile = Profile.builder()
+                        .language("ru")
+                        .street("Street 12")
+                        .build();
+                profile.setUser(user);
+
+                Chat chat1 = Chat.builder()
+                        .name("chat1")
+                        .build();
+
+                user.addChat(chat1);
+
+                session.persist(chat1);
+
+
+                company.addUser(user);
+
+
+                session.persist(company);
+
+                System.out.println();
+
+                session.getTransaction().commit();
+
+            }
+        }
+    }
+    @Test
+    void CheckOneToOne() {
+        try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory()) {
+            try (Session session = sessionFactory.openSession()) {
+                session.beginTransaction();
+
+                User user1 = session.get(User.class, 7L);
+                System.out.println(user1);
+
+                Company company = Company.builder()
+                        .name("Google")
+                        .users(new HashSet<>())
+                        .build();
+
+                User user = User.builder()
+                        .userName("ngulamidinov45@gmail.com")
+                        .age(20)
+                        .personalInfo(
+                                PersonalInfo.builder()
+                                        .firstName("Nurbolot %d")
+                                        .lastName("Gulamidinov %d")
+                                        .birthDate(LocalDate.of(2002, 11, 5))
+                                        .build()
+                        )
+                        .role(Role.USER)
+                        .company(company)
+                        .build();
+
+
+                Profile profile = Profile.builder()
+                        .language("ru")
+                        .street("Street 12")
+                        .build();
+                profile.setUser(user);
+
+                company.addUser(user);
+
+
+                session.persist(company);
+
+                System.out.println();
+
+                session.getTransaction().commit();
+
+            }
+        }
+    }
+
+    @Test
+    void deleteUserOrphanRemoval() {
         SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
@@ -34,6 +141,7 @@ class HibernateRunnerTest {
             session.getTransaction().commit();
         }
     }
+
     @Test
     void addNewUserToCompany() {
         @Cleanup SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
@@ -92,7 +200,7 @@ class HibernateRunnerTest {
                 (%s)
                 values
                 (%s)
-                                
+
                 """;
 
         String tableName = Optional.ofNullable(user.getClass().getAnnotation(Table.class))

@@ -12,7 +12,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -22,7 +25,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
+
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -54,6 +60,23 @@ public class User {
     @ToString.Exclude
     private Company company;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id")
+    @ToString.Exclude
+    private Profile profile;
+
+    @ManyToMany()
+    @JoinTable(name = "users_chat",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "chat_id")
+    )
+    @Builder.Default
+    private Set<Chat> chats = new HashSet<>();
+
+    public void addChat(Chat chat){
+        chats.add(chat);
+        chat.getUsers().add(this);
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

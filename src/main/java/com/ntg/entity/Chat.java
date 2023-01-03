@@ -1,17 +1,19 @@
 package com.ntg.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
@@ -27,32 +29,26 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Company {
+@Table(name = "chats", schema = "public")
+public class Chat {
     @Id
-    @SequenceGenerator(name = "company_id_seq_gen", sequenceName = "company_id_seq", allocationSize = 1)
-    @GeneratedValue(generator = "company_id_seq_gen", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "chat_id_gen", sequenceName = "Chats_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chat_id_gen")
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(unique = true, nullable = false)
     private String name;
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(mappedBy = "chats")
     @ToString.Exclude
     @Builder.Default
     private Set<User> users = new HashSet<>();
-
-    public boolean addUser(User user){
-        this.users.add(user);
-        user.setCompany(this);
-        return true;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Company company = (Company) o;
-        return id != null && Objects.equals(id, company.id);
+        Chat chat = (Chat) o;
+        return id != null && Objects.equals(id, chat.id);
     }
 
     @Override
