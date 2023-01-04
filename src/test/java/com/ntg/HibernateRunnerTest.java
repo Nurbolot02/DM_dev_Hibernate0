@@ -2,6 +2,7 @@ package com.ntg;
 
 import com.ntg.entity.Chat;
 import com.ntg.entity.Company;
+import com.ntg.entity.LocaleInfo;
 import com.ntg.entity.PersonalInfo;
 import com.ntg.entity.Profile;
 import com.ntg.entity.Role;
@@ -28,6 +29,18 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 class HibernateRunnerTest {
+
+    @Test
+    void localeTest(){
+        @Cleanup SessionFactory sessionFactory =  HibernateUtil.buildSessionFactory();
+        @Cleanup Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        Company company = session.get(Company.class, 2);
+        company.getLocales().clear();
+        company.getLocales().add(LocaleInfo.of("ru", "описание на русском"));
+        company.getLocales().add(LocaleInfo.of("en", "english description"));
+        transaction.commit();
+    }
 
     @Test
     void CheckManyToMany() {

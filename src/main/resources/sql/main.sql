@@ -3,6 +3,7 @@ drop table if exists company cascade ;
 drop table if exists profile cascade ;
 drop table if exists chats cascade ;
 drop table if exists users_chat cascade ;
+drop table if exists company_locale cascade ;
 
 create table company(
     id int primary key,
@@ -57,3 +58,11 @@ create table users_chat(
 
 create sequence users_chat_id_seq
 owned by users_chat.id;
+
+
+create table company_locale(
+    company_id int not null references company(id),
+    lang varchar(2) not null,
+    description varchar(128) not null,
+    primary key (company_id, lang)
+)

@@ -1,12 +1,15 @@
 package com.ntg.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,8 +18,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.SortNatural;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -39,12 +45,17 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @Builder.Default
+    @OrderBy("userName desc ")
+    @SortNatural
     private Set<User> users = new HashSet<>();
+    @Builder.Default
+    @ElementCollection
+    @CollectionTable(name = "company_locale")
+    private List<LocaleInfo> locales = new ArrayList<>();
 
-    public boolean addUser(User user){
+    public void addUser(User user){
         this.users.add(user);
         user.setCompany(this);
-        return true;
     }
 
     @Override
