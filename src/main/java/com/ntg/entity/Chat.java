@@ -5,22 +5,20 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -38,10 +36,10 @@ public class Chat {
     private Long id;
 
     private String name;
-    @ManyToMany(mappedBy = "chats")
+    @OneToMany(mappedBy = "chat")
     @ToString.Exclude
     @Builder.Default
-    private Set<User> users = new HashSet<>();
+    private List<UserChat> userChats = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

@@ -12,9 +12,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -26,9 +25,9 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -60,29 +59,22 @@ public class User {
     @ToString.Exclude
     private Company company;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, optional = false)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
     @JoinColumn(name = "id")
     @ToString.Exclude
     private Profile profile;
 
-    @ManyToMany()
-    @JoinTable(name = "users_chat",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "chat_id")
-    )
+    @OneToMany(mappedBy = "user")
     @Builder.Default
-    private Set<Chat> chats = new HashSet<>();
+    @ToString.Exclude
+    private List<UserChat> userChats = new ArrayList<>();
 
-    public void addChat(Chat chat){
-        chats.add(chat);
-        chat.getUsers().add(this);
-    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         User user = (User) o;
-        return userName != null && Objects.equals(userName, user.userName);
+        return id != null && Objects.equals(id, user.id);
     }
 
     @Override

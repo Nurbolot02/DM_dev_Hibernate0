@@ -6,18 +6,21 @@ import com.ntg.entity.PersonalInfo;
 import com.ntg.entity.Profile;
 import com.ntg.entity.Role;
 import com.ntg.entity.User;
+import com.ntg.entity.UserChat;
 import com.ntg.util.HibernateUtil;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 import lombok.Cleanup;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,57 +32,33 @@ class HibernateRunnerTest {
     @Test
     void CheckManyToMany() {
         try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory()) {
+            try (Session session1 = sessionFactory.openSession()) {
+                Transaction transaction = session1.beginTransaction();
+
+                UserChat userChat = session1.get(UserChat.class, 7L);
+                session1.remove(userChat);
+                transaction.commit();
+            }
             try (Session session = sessionFactory.openSession()) {
                 session.beginTransaction();
 
-                User user1 = session.get(User.class, 7L);
-                System.out.println(user1);
+                User user = session.get(User.class, 2L);
+                Chat chat = session.get(Chat.class, 1L);
 
-                Company company = Company.builder()
-                        .name("Google")
-                        .users(new HashSet<>())
+
+                UserChat userChat = UserChat.builder()
+                        .chat(chat)
+                        .user(user)
+                        .createdAt(Instant.now())
+                        .addedBy("user1.getUserName()")
                         .build();
 
-                User user = User.builder()
-                        .userName("ngulamidinov45@gmail.com")
-                        .age(20)
-                        .personalInfo(
-                                PersonalInfo.builder()
-                                        .firstName("Nurbolot %d")
-                                        .lastName("Gulamidinov %d")
-                                        .birthDate(LocalDate.of(2002, 11, 5))
-                                        .build()
-                        )
-                        .role(Role.USER)
-                        .company(company)
-                        .build();
-
-
-                Profile profile = Profile.builder()
-                        .language("ru")
-                        .street("Street 12")
-                        .build();
-                profile.setUser(user);
-
-                Chat chat1 = Chat.builder()
-                        .name("chat1")
-                        .build();
-
-                user.addChat(chat1);
-
-                session.persist(chat1);
-
-
-                company.addUser(user);
-
-
-                session.persist(company);
-
-                System.out.println();
+                session.persist(userChat);
 
                 session.getTransaction().commit();
 
             }
+            System.out.println();
         }
     }
     @Test
@@ -132,7 +111,7 @@ class HibernateRunnerTest {
 
     @Test
     void deleteUserOrphanRemoval() {
-        SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
+        @Cleanup SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             Company company = session.getReference(Company.class, 1);

@@ -48,7 +48,12 @@ owned by chats.id;
 
 
 create table users_chat(
-    user_id bigint references users(id) not null  unique ,
+    id bigint primary key,
+    user_id bigint references users(id) not null unique ,
     chat_id bigint references chats(id) not null unique ,
-    primary key (user_id, chat_id)
+    created_at timestamp not null,
+    added_by varchar(128) not null
 );
+
+create sequence users_chat_id_seq
+owned by users_chat.id;

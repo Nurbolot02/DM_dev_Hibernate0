@@ -4,6 +4,7 @@ import com.ntg.entity.Chat;
 import com.ntg.entity.Company;
 import com.ntg.entity.Profile;
 import com.ntg.entity.User;
+import com.ntg.entity.UserChat;
 import lombok.experimental.UtilityClass;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
@@ -17,6 +18,7 @@ public class HibernateUtil {
         configuration.addAnnotatedClass(Company.class);
         configuration.addAnnotatedClass(Profile.class);
         configuration.addAnnotatedClass(Chat.class);
+        configuration.addAnnotatedClass(UserChat.class);
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         configuration.configure();
         return configuration.buildSessionFactory();
