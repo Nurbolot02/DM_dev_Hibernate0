@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.MapKey;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.SequenceGenerator;
@@ -21,10 +22,13 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.SortNatural;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 
 @Getter
 @Setter
@@ -45,16 +49,18 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @Builder.Default
-    @OrderBy("userName desc ")
+//    @OrderBy("userName desc ")
+//    @SortNatural
+    @MapKey(name = "userName")
     @SortNatural
-    private Set<User> users = new HashSet<>();
+    private Map<String, User> users = new TreeMap<>();
     @Builder.Default
     @ElementCollection
     @CollectionTable(name = "company_locale")
     private List<LocaleInfo> locales = new ArrayList<>();
 
     public void addUser(User user){
-        this.users.add(user);
+        this.users.put(user.getUserName(), user);
         user.setCompany(this);
     }
 

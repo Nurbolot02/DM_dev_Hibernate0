@@ -9,6 +9,7 @@ import com.ntg.entity.Role;
 import com.ntg.entity.User;
 import com.ntg.entity.UserChat;
 import com.ntg.util.HibernateUtil;
+import com.ntg.util.HibernateUtilTest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 import lombok.Cleanup;
@@ -31,13 +32,29 @@ import java.util.stream.Collectors;
 class HibernateRunnerTest {
 
     @Test
+    void createH2Database(){
+        @Cleanup SessionFactory sessionFactory = HibernateUtilTest.buildSessionFactory();
+        @Cleanup Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        Company company = Company.builder()
+                .name("Google")
+                .build();
+
+
+        session.persist(company);
+        transaction.commit();
+
+    }
+
+    @Test
     void localeTest(){
         @Cleanup SessionFactory sessionFactory =  HibernateUtil.buildSessionFactory();
         @Cleanup Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         Company company = session.get(Company.class, 2);
         company.getLocales().clear();
-        company.getLocales().add(LocaleInfo.of("ru", "описание на русском"));
+        company.getLocales().add(LocaleInfo.of("ru", "russian description"));
         company.getLocales().add(LocaleInfo.of("en", "english description"));
         transaction.commit();
     }
@@ -85,7 +102,6 @@ class HibernateRunnerTest {
 
                 Company company = Company.builder()
                         .name("Google")
-                        .users(new HashSet<>())
                         .build();
 
                 User user = User.builder()
@@ -128,7 +144,7 @@ class HibernateRunnerTest {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             Company company = session.getReference(Company.class, 1);
-            company.getUsers().removeIf(user -> user.getId().equals(1L));
+//            company.getUsers().removeIf(user -> user.getId().equals(1L));
             System.out.println();
             session.getTransaction().commit();
         }
@@ -142,7 +158,6 @@ class HibernateRunnerTest {
 
         Company facebook = Company.builder()
                 .name("Facebook2")
-                .users(new HashSet<>())
                 .build();
 
         User sveta = User.builder()

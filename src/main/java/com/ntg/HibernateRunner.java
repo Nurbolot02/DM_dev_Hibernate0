@@ -50,7 +50,6 @@ public class HibernateRunner {
 
         Company company = Company.builder()
                 .name("Google")
-                .users(new HashSet<>())
                 .build();
 
         User user = User.builder()
