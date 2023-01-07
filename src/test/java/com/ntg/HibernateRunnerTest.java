@@ -2,9 +2,12 @@ package com.ntg;
 
 import com.ntg.entity.Chat;
 import com.ntg.entity.Company;
+import com.ntg.entity.Language;
 import com.ntg.entity.LocaleInfo;
+import com.ntg.entity.Manager;
 import com.ntg.entity.PersonalInfo;
 import com.ntg.entity.Profile;
+import com.ntg.entity.Programmer;
 import com.ntg.entity.Role;
 import com.ntg.entity.User;
 import com.ntg.entity.UserChat;
@@ -22,10 +25,8 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -41,8 +42,31 @@ class HibernateRunnerTest {
                 .name("Google")
                 .build();
 
-
         session.persist(company);
+
+        Programmer programmer = Programmer.builder()
+                .userName("Sveta@mail.ru")
+                .language(Language.JAVA)
+                .role(Role.USER)
+                .build();
+        session.persist(programmer);
+
+        Manager manager = Manager.builder()
+                .userName("NTG@mail.ru")
+                .projectName("Inheritance")
+                .role(Role.USER)
+                .build();
+        session.persist(manager);
+
+        session.flush();
+        session.clear();
+
+        Programmer programmer1 = session.get(Programmer.class, 1L);
+        var manager1 = session.get(User.class, 2L);
+
+        System.out.println();
+
+
         transaction.commit();
 
     }
@@ -102,19 +126,19 @@ class HibernateRunnerTest {
                         .name("Google")
                         .build();
 
-                User user = User.builder()
-                        .userName("ngulamidinov45@gmail.com")
-                        .age(20)
-                        .personalInfo(
-                                PersonalInfo.builder()
-                                        .firstName("Nurbolot %d")
-                                        .lastName("Gulamidinov %d")
-                                        .birthDate(LocalDate.of(2002, 11, 5))
-                                        .build()
-                        )
-                        .role(Role.USER)
-                        .company(company)
-                        .build();
+                User user = null; // User.builder()
+//                        .userName("ngulamidinov45@gmail.com")
+//                        .age(20)
+//                        .personalInfo(
+//                                PersonalInfo.builder()
+//                                        .firstName("Nurbolot %d")
+//                                        .lastName("Gulamidinov %d")
+//                                        .birthDate(LocalDate.of(2002, 11, 5))
+//                                        .build()
+//                        )
+//                        .role(Role.USER)
+//                        .company(company)
+//                        .build();
 
 
                 Profile profile = Profile.builder()
@@ -158,11 +182,11 @@ class HibernateRunnerTest {
                 .name("Facebook2")
                 .build();
 
-        User sveta = User.builder()
-                .userName("Sveta@gmail.com")
-                .age(30)
-                .role(Role.USER)
-                .build();
+        User sveta = null; // User.builder()
+//                .userName("Sveta@gmail.com")
+//                .age(30)
+//                .role(Role.USER)
+//                .build();
 
         facebook.addUser(sveta);
 
@@ -186,17 +210,17 @@ class HibernateRunnerTest {
     @Test
     void checkReflectionApi() throws SQLException {
         User user;
-        user = User.builder()
-                .userName("ngulamidinov@gmail.com")
-                .age(20)
-                .personalInfo(
-                        PersonalInfo.builder()
-                                .firstName("Nurbolot")
-                                .lastName("Gulamidinov")
-                                .birthDate(LocalDate.of(2002, 11, 5))
-                                .build()
-                )
-                .build();
+        user = null; // User.builder()
+//                .userName("ngulamidinov@gmail.com")
+//                .age(20)
+//                .personalInfo(
+//                        PersonalInfo.builder()
+//                                .firstName("Nurbolot")
+//                                .lastName("Gulamidinov")
+//                                .birthDate(LocalDate.of(2002, 11, 5))
+//                                .build()
+//                )
+//                .build();
 
         String sql = """
                 insert

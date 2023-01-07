@@ -52,34 +52,34 @@ public class HibernateRunner {
                 .name("Google")
                 .build();
 
-        User user = User.builder()
-                .userName("ngulamidinov45@gmail.com")
-                .age(20)
-                .personalInfo(
-                        PersonalInfo.builder()
-                                .firstName("Nurbolot %d")
-                                .lastName("Gulamidinov %d")
-                                .birthDate(LocalDate.of(2002, 11, 5))
-                                .build()
-                )
-                .role(Role.USER)
-                .company(company)
-                .build();
+        User user = null; //User.builder()
+//                .userName("ngulamidinov45@gmail.com")
+//                .age(20)
+//                .personalInfo(
+//                        PersonalInfo.builder()
+//                                .firstName("Nurbolot %d")
+//                                .lastName("Gulamidinov %d")
+//                                .birthDate(LocalDate.of(2002, 11, 5))
+//                                .build()
+//                )
+//                .role(Role.USER)
+//                .company(company)
+//                .build();
 
 
-        User user2 = User.builder()
-                .userName("ngulamidinov@gmail.com")
-                .age(20)
-                .personalInfo(
-                        PersonalInfo.builder()
-                                .firstName("Nurbolot %d")
-                                .lastName("Gulamidinov %d")
-                                .birthDate(LocalDate.of(2002, 11, 5))
-                                .build()
-                )
-                .role(Role.USER)
-                .company(company)
-                .build();
+        User user2 = null; // User.builder()
+//                .userName("ngulamidinov@gmail.com")
+//                .age(20)
+//                .personalInfo(
+//                        PersonalInfo.builder()
+//                                .firstName("Nurbolot %d")
+//                                .lastName("Gulamidinov %d")
+//                                .birthDate(LocalDate.of(2002, 11, 5))
+//                                .build()
+//                )
+//                .role(Role.USER)
+//                .company(company)
+//                .build();
 
         try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory()
         ) {

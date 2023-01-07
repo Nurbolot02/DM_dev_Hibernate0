@@ -2,7 +2,9 @@ package com.ntg.util;
 
 import com.ntg.entity.Chat;
 import com.ntg.entity.Company;
+import com.ntg.entity.Manager;
 import com.ntg.entity.Profile;
+import com.ntg.entity.Programmer;
 import com.ntg.entity.User;
 import com.ntg.entity.UserChat;
 import lombok.experimental.UtilityClass;
@@ -25,6 +27,8 @@ public class HibernateUtil {
         configuration.addAnnotatedClass(Profile.class);
         configuration.addAnnotatedClass(Chat.class);
         configuration.addAnnotatedClass(UserChat.class);
+        configuration.addAnnotatedClass(Programmer.class);
+        configuration.addAnnotatedClass(Manager.class);
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         return configuration;
     }
