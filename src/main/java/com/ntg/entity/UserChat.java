@@ -10,24 +10,24 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
-
-import java.time.Instant;
 import java.util.Objects;
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "users_chat")
-public class UserChat {
+public class UserChat extends AuditableEntity<Long> {
     @Id
     @SequenceGenerator(name = "users_chat_id_gen", sequenceName = "users_chat_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_chat_id_gen")
@@ -42,19 +42,6 @@ public class UserChat {
     @JoinColumn(name = "chat_id")
     @ToString.Exclude
     private Chat chat;
-
-    private Instant createdAt;
-
-    private String addedBy;
-
-    public UserChat(Long id, User user, Chat chat, Instant createdAt, String addedBy) {
-        this.user = user;
-        this.chat = chat;
-        this.createdAt = createdAt;
-        this.addedBy = addedBy;
-        user.getUserChats().add(this);
-        chat.getUserChats().add(this);
-    }
 
     public void setUser(User user) {
         this.user = user;

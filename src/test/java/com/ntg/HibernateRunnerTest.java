@@ -79,8 +79,6 @@ class HibernateRunnerTest {
                 UserChat userChat = UserChat.builder()
                         .chat(chat)
                         .user(user)
-                        .createdAt(Instant.now())
-                        .addedBy("user1.getUserName()")
                         .build();
 
                 session.persist(userChat);

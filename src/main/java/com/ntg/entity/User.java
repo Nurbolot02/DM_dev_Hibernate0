@@ -37,7 +37,7 @@ import java.util.Objects;
 @Builder
 @Entity
 @Table(name = "users", schema = "public")
-public class User {
+public class User implements BaseEntity<Long> {
 
     @Id
     @SequenceGenerator(name = "user_seq_gen", sequenceName = "users_id_seq", allocationSize = 1)
