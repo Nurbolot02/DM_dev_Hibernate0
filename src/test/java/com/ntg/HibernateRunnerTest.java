@@ -5,7 +5,6 @@ import com.ntg.entity.Company;
 import com.ntg.entity.Language;
 import com.ntg.entity.LocaleInfo;
 import com.ntg.entity.Manager;
-import com.ntg.entity.PersonalInfo;
 import com.ntg.entity.Profile;
 import com.ntg.entity.Programmer;
 import com.ntg.entity.Role;
@@ -19,18 +18,79 @@ import lombok.Cleanup;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.criteria.HibernateCriteriaBuilder;
+import org.hibernate.query.criteria.JpaCriteriaQuery;
+import org.hibernate.query.criteria.JpaRoot;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 class HibernateRunnerTest {
+
+
+    @Test
+    void checkCriteria(){
+        try (SessionFactory sessionFactory = HibernateUtilTest.buildSessionFactory()) {
+            try (Session session = sessionFactory.openSession()) {
+                Transaction transaction = session.beginTransaction();
+                Company company = Company.builder()
+                        .name("Google")
+                        .build();
+
+                session.persist(company);
+
+                Programmer programmer = Programmer.builder()
+                        .userName("Sveta@mail.ru")
+                        .language(Language.JAVA)
+                        .role(Role.USER)
+                        .build();
+                session.persist(programmer);
+
+                Manager manager = Manager.builder()
+                        .userName("NTG@mail.ru")
+                        .projectName("Inheritance")
+                        .role(Role.USER)
+                        .build();
+                session.persist(manager);
+
+                session.flush();
+
+                HibernateCriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+                JpaCriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
+
+                JpaRoot<User> userJpaRoot = criteriaQuery.from(User.class);
+
+                criteriaQuery.select(userJpaRoot)
+                        .where(criteriaBuilder.equal(userJpaRoot.get("id"), 1L));
+
+                List<User> users = session.createQuery(criteriaQuery).list();
+
+                transaction.commit();
+            }
+        }
+    }
+
+    @Test
+    void checkHQL(){
+        @Cleanup SessionFactory sessionFactory = HibernateUtilTest.buildSessionFactory();
+        @Cleanup Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        List<User> list = session.createQuery("select u from User u where u.personalInfo.firstName = ''", User.class).list();
+        list.forEach(System.out::println);
+        transaction.commit();
+    }
 
     @Test
     void createH2Database(){
